@@ -1,0 +1,27 @@
+[seed 2026] params=493,840 seq=1024 batch_seqs=8 steps=1200
+[seed 2026] step 1/1200 loss 5.4203 bpb 7.8199 lr 0.00013 elapsed 1.8s
+[seed 2026] step 51/1200 loss 2.5160 bpb 3.6298 lr 0.00500 elapsed 52.8s
+[seed 2026] step 101/1200 loss 2.3690 bpb 3.4177 lr 0.00497 elapsed 102.2s
+[seed 2026] step 151/1200 loss 1.8434 bpb 2.6595 lr 0.00490 elapsed 152.1s
+[seed 2026] step 201/1200 loss 1.6891 bpb 2.4368 lr 0.00478 elapsed 201.5s
+[seed 2026] step 251/1200 loss 1.5469 bpb 2.2317 lr 0.00463 elapsed 251.5s
+[seed 2026] step 301/1200 loss 1.7733 bpb 2.5583 lr 0.00444 elapsed 301.0s
+[seed 2026] step 351/1200 loss 1.5980 bpb 2.3055 lr 0.00421 elapsed 350.5s
+[seed 2026] step 401/1200 loss 1.4074 bpb 2.0304 lr 0.00396 elapsed 400.4s
+[seed 2026] step 451/1200 loss 1.3099 bpb 1.8898 lr 0.00368 elapsed 452.1s
+[seed 2026] step 501/1200 loss 1.2161 bpb 1.7544 lr 0.00338 elapsed 503.3s
+[seed 2026] step 551/1200 loss 1.4541 bpb 2.0978 lr 0.00307 elapsed 553.8s
+[seed 2026] step 601/1200 loss 1.3193 bpb 1.9033 lr 0.00275 elapsed 605.8s
+[seed 2026] step 651/1200 loss 1.0271 bpb 1.4819 lr 0.00243 elapsed 657.7s
+[seed 2026] step 701/1200 loss 1.2633 bpb 1.8225 lr 0.00211 elapsed 708.0s
+[seed 2026] step 751/1200 loss 0.8439 bpb 1.2175 lr 0.00181 elapsed 768.2s
+[seed 2026] step 801/1200 loss 1.1529 bpb 1.6632 lr 0.00151 elapsed 821.5s
+[seed 2026] step 851/1200 loss 0.9822 bpb 1.4170 lr 0.00124 elapsed 878.6s
+[seed 2026] step 901/1200 loss 1.0206 bpb 1.4724 lr 0.00099 elapsed 936.2s
+[seed 2026] step 951/1200 loss 1.1846 bpb 1.7090 lr 0.00077 elapsed 983.5s
+[seed 2026] step 1001/1200 loss 1.1633 bpb 1.6783 lr 0.00059 elapsed 1028.6s
+[seed 2026] step 1051/1200 loss 0.8903 bpb 1.2845 lr 0.00044 elapsed 1072.9s
+[seed 2026] step 1101/1200 loss 0.5411 bpb 0.7806 lr 0.00034 elapsed 1123.3s
+[seed 2026] step 1151/1200 loss 1.1236 bpb 1.6210 lr 0.00027 elapsed 1167.5s
+[seed 2026] step 1200/1200 loss 1.0632 bpb 1.5338 lr 0.00025 elapsed 1211.2s
+[seed 2026] 完成 -> runs_w1024\ckpt_seed2026.pt

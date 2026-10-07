@@ -1,0 +1,32 @@
+同源性审计：提交脚本  vs  CPU dry-run 改编版
+========================================================================
+提交脚本      : C:\Users\卢怡然\Desktop\C2G\卢怡然_C2G_train_gpt.py
+  sha256      = 19f493edbac875accbd51750d0787c7d583a44b1300f8a585177ba0749d37584
+  lines       = 1463
+dry-run 改编版: C:\Users\卢怡然\Desktop\C2G\pg_lab\dryrun\train_gpt_cpu.py
+  sha256      = e5825e951c8741513ce8914d29b143e075dd63302000a1c576dca2e3943908fe
+  lines       = 1484
+
+[1] 统一 diff 覆盖审计（n=0，从磁盘两文件重新推导）
+    差异行           ：-22 / +43
+    已声明补丁       ：11 条，预期删除行合计 = 22
+    删除行数 == 预期 ：是
+    未能被解释的差异行：0 条
+    结论：PASS —— 除声明的设备补丁外无任何改动
+
+[2] 关键函数逐函数 diff（判据：删除行必须能被已声明补丁解释）
+    OK  eval_val_sliding             (103 行, -1/+1) 仅 1 处设备适配差异
+    OK  measure_position_profile     (38 行, -1/+1) 仅 1 处设备适配差异
+    OK  pick_stride_by_knee          (36 行, -0/+0) 逐字节相同
+    OK  _parse_knee_candidates       (21 行, -0/+0) 逐字节相同
+    OK  resolve_eval_stride          (37 行, -0/+0) 逐字节相同
+    OK  stride_candidates            (5 行, -0/+0) 逐字节相同
+    OK  GPT.forward_logits           (26 行, -0/+0) 逐字节相同
+    结论：PASS —— 评测/标定逻辑与提交脚本同源（差异仅设备适配）
+
+[3] 诚实限定
+    - 这不是「在提交脚本原文上直接跑」：本机无 GPU，原文开头就
+      raise RuntimeError('CUDA is required')，物理上跑不起来。
+    - 上述 [1][2] 是能给出的最强替代证明：差异被逐行枚举且全部为设备适配，
+      评测/标定逻辑逐字节同源。
+    - 如需在真机验证，步骤见 README「拿到 8xH100 后怎么跑」。

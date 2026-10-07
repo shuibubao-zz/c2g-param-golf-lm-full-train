@@ -1,0 +1,73 @@
+base_sha256.txt — 基线、产物与证据文件的 sha256 登记（v4）
+由 pg_lab/hash_registry.py 生成；复跑：python pg_lab/hash_registry.py
+==============================================================================
+
+[1] 官方基线（已复制进交付包，MIT 许可；本目录随包交付，不依赖 _upstream/）
+  evidence/upstream/root_train_gpt.py
+    sha256 = c6cae5e767aa0464e8767620f3bbdb08048c99f4b7ae0f0e146dd9b17e68e673
+    lines  = 1126   bytes = 47686
+    来源   = openai/parameter-golf @ main : train_gpt.py
+    说明   = 本方案的基线。提交脚本 = 这份文件 + evidence/submission_script.patch
+  evidence/upstream/record_2026-03-19_SlidingWindowEval_train_gpt.py
+    sha256 = cf6123df1c5f5b9eebcb49b37722e5f434e5ab1442a2491b81f33f5725a9ad8c
+    lines  = 1366   bytes = 58357
+    来源   = openai/parameter-golf @ main : records/track_10min_16mb/2026-03-19_SlidingWindowEval/train_gpt.py
+    说明   = 滑窗评测机制的出处（Matthew Li）。只借鉴机制，架构与它不同（它含 num_loops/lora_adapters）
+  evidence/upstream/record_2026-03-17_NaiveBaseline_train_gpt.py
+    sha256 = e77cf46e4a37cdb6ae8de4f82ac4f139674e5e60f16e0533aa6beecefacf3421
+    lines  = 1126   bytes = 47642
+    来源   = openai/parameter-golf @ main : records/track_10min_16mb/2026-03-17_NaiveBaseline/train_gpt.py
+    说明   = 朴素评测记录，用于三方对照
+  evidence/upstream/LICENSE_upstream.txt
+    sha256 = 7de1e115d165f176e68f962acdb809b5ab8d8ae78d3981e0701392b2ac50c713
+    lines  = 21   bytes = 1063
+    来源   = openai/parameter-golf @ main : LICENSE
+    说明   = MIT License (c) 2026 OpenAI —— 允许把 baseline 复制进本交付包
+
+[2] 提交脚本与补丁
+  卢怡然_C2G_train_gpt.py
+    sha256 = 19f493edbac875accbd51750d0787c7d583a44b1300f8a585177ba0749d37584
+    lines  = 1463   bytes = 65141
+  evidence/submission_script.patch
+    sha256 = 06e012687495c9714de71c753e85cf01d437b2f01e195229ea746bf4b49ced5e
+    lines  = 402   bytes = 20179
+    diff 头（fromfile/tofile 均为包内路径，可直接 apply）：
+      # 本 diff 的两条路径都在交付包内，可直接 apply：
+      #   git -c core.autocrlf=false apply -p1 evidence/submission_script.patch
+      # 说明：必须关掉 autocrlf，否则 Windows 默认配置会把产出转成 CRLF，字节数与 sha256 都对不上。
+
+[3] 补丁可 apply 性自检（在包内路径上真跑一次）
+    git -c core.autocrlf=false apply -p1 evidence/submission_script.patch
+    结果：PASS —— apply 成功，产物 65141 字节，sha256 与提交脚本一致
+
+[4] evidence/ 下其他证据文件的 sha256（防证据文件被换过）
+  analyze_output.txt                                   02b3d6778b033e60a0e4476a37c3ca584dadcb7d0fbaaf895bc55fe40214af4a  (    1524 bytes)
+  crossvalidate_output.txt                             fdd302cd1c258317796844297ecad51235edd790e9394e4f4ec257f115406b63  (    2042 bytes)
+  dryrun_all_v4_log.txt                                0ea009e40adea5e956014abd06f337c3a1d038e17260d155ce82c7c9bc03b7b9  (   13157 bytes)
+  dryrun_fixed.txt                                     2f24623133d5303deaee148c345d540fab07781ae1b69abd7ad2613a0e58fc45  (    2606 bytes)
+  dryrun_knee.txt                                      3fc8b72d4fd3ddcd40fca6c27aadf4aa55907bf3dac3aae9eaf90b99d37c2c37  (    2809 bytes)
+  dryrun_knee_tight.txt                                b341c115c995268536357d89e6bf0b77a835daceecd408cd50e3481b4cb322ba  (    2872 bytes)
+  dryrun_naive.txt                                     fbf7fc4a5b53bc4119254839b4d51f0e90430f4688b7e0f8f3229bc8ebc99e2e  (    2371 bytes)
+  dryrun_同源性证明.txt                                     e4bc27d3e377408665e8adeb912b46fbac91e17837207d90006fd43579a5c64d  (    1941 bytes)
+  forward_logits_等价性验证.py                              88188bd08e4ad0a1764f828f71212cc1ce0dc07cf6a97f9cff502d1040eef8ab  (    5729 bytes)
+  forward_logits_等价性验证_输出.txt                          8333e331650a62568c931752ccf4c4ce5d6e1274d65d8f141b01b0cfa0d05924  (    1905 bytes)
+  github_id一致性核验.md                                    90c5b5cdffb1fe00ff45eff0de3cc91585f4bbaa47346a3412185218d7cb7796  (    1349 bytes)
+  leaderboard_official.md                              258f40469ee018f49e54c885af41e85318ea388102868a93fde19c16a97dd790  (    2430 bytes)
+  selftest_v2_check.txt                                f48aa621568a9b4281bab7b14363f5ba7405c57c9c230d1c827c16dd84dd11b9  (     595 bytes)
+  selftest_v4.txt                                      2d8a6bbbdd532ac8fbb8e39cbbaf3a1a0f72bbfad726bcaca6b9f8d380e05cdd  (     729 bytes)
+  submission_script.patch                              06e012687495c9714de71c753e85cf01d437b2f01e195229ea746bf4b49ced5e  (   20179 bytes)
+  submit_guard_audit.txt                               ddf9fa45833cd1c5011910719938929a13a4f7dbdc27e57ec191e99332ba285c  (    3785 bytes)
+  submit_guard_audit_v2.txt                            c522428857483f2f39b958415f1cb107644f0a545ae2dfa50b99790df040030b  (    3791 bytes)
+  submit_guard_audit_v3.txt                            4fe0d53bdf93d98ccdb76ad7752e8e386377b8760c243ce0623a58f3e079ae04  (    3791 bytes)
+  w1024_config_check.txt                               153c02bc3b97c3ebd36f02fc30f3e8329cfc7a04c073b0c5a6cc43b07d7d4a48  (    1927 bytes)
+  代码自查_评审五问.md                                         401c780feabacda176bc535c80dbef0605f08eccac4228cfd78592d1ed1116ec  (   12134 bytes)
+  回归测试_反向验证.py                                         a4ad08cbf7426635ea28b9cf389f555c8a6e99d48b4355daabcbed12be83e23c  (    7294 bytes)
+  回归测试_反向验证_输出.txt                                     882e92a9ac7aeb4fff76f18354a6c546b9daed4260cb9ba76abf606dbe14297c  (     736 bytes)
+  基线核对说明.md                                            bf6bf145bb3efcf36447778f37da30e53738eed529af0d44b7eb2cf3203e433a  (    4079 bytes)
+  官方评分标准_rubric_C2G.json                               0ffaedb175d51751d1a12d5bb14c2e74dc559ed3da4b494a359cb5c4e114df5c  (    2482 bytes)
+  审计说明_空文件.md                                          fae2d979975d166b104b74e981ede91ee1801fdf78283ed39307859be1edf6b6  (     799 bytes)
+  评分标准出处核验.md                                          ff00b58072bac053b1f293bcef1d627c90a91e5144435adb8e6be1d9d41f86a6  (    2608 bytes)
+
+[5] 一句话结论
+  提交脚本 = 包内官方基线（MIT，随包交付）+ 包内补丁；
+  两者路径都在包内，拿到包即可独立复现，无需 _upstream/ 或外网。

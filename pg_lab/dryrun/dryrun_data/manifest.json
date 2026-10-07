@@ -1,0 +1,7 @@
+{
+  "spm_vocab": 1024,
+  "train_tokens": 400000,
+  "val_tokens": 48000,
+  "token_max": 1023,
+  "format": "256x<int32 header(20240520,1,n,0...)> + n\u00d7<uint16>"
+}

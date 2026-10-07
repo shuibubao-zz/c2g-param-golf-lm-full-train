@@ -1,0 +1,23 @@
+# 交付包本身应该进仓库的东西；其余都是可再生产物或上游代码
+
+# 上游第三方代码（原始克隆不进仓库，只留可再生产的来源）
+_upstream/
+# 但 evidence/upstream/ 是**刻意入库**的：评审拿到的包里必须能直接 apply 补丁、
+# 直接核对基线哈希。上游是 MIT 许可（见 evidence/upstream/LICENSE_upstream.txt），
+# 允许随包再分发。v4 之前这里被一起忽略，导致证据链断口，已修。
+!evidence/upstream/
+pg_lab/data/
+pg_lab/runs/
+pg_lab/__pycache__/
+pg_lab/analysis/*.npy
+
+# 中间产物
+*.pyc
+__pycache__/
+.vscode/
+.DS_Store
+
+# 大型二进制（如需提交请在 README 里说明获取方式）
+*.tar.gz
+*.int8.ptz
+final_model.int8.ptz

@@ -1,0 +1,136 @@
+{
+  "seed": 2026,
+  "window": 1024,
+  "val_bytes": 400000,
+  "naive_bpb": 2.081603939497414,
+  "meta": {
+    "n_windows": 6234,
+    "window": 1024,
+    "seconds": 207.83,
+    "tokens_per_sec": 30715
+  },
+  "protocols": [
+    {
+      "window": 1024,
+      "stride": 1024,
+      "bpb": 2.081603939497414,
+      "bpb_steady_state": 2.081603939497414,
+      "min_context": 0,
+      "cost_multiplier": 1.0,
+      "forward_tokens": 399360,
+      "n_windows": 390,
+      "edge_window_share": 0.002564102564102564
+    },
+    {
+      "window": 1024,
+      "stride": 768,
+      "bpb": 2.0634880013436216,
+      "bpb_steady_state": 2.0634414607189493,
+      "min_context": 256,
+      "cost_multiplier": 1.3333333333333333,
+      "forward_tokens": 532480,
+      "n_windows": 520,
+      "edge_window_share": 0.0025624599615631004
+    },
+    {
+      "window": 1024,
+      "stride": 512,
+      "bpb": 2.06253437328662,
+      "bpb_steady_state": 2.062485476963003,
+      "min_context": 512,
+      "cost_multiplier": 2.0,
+      "forward_tokens": 799744,
+      "n_windows": 781,
+      "edge_window_share": 0.0025575447570332483
+    },
+    {
+      "window": 1024,
+      "stride": 384,
+      "bpb": 2.0627184103358425,
+      "bpb_steady_state": 2.0626699859020947,
+      "min_context": 640,
+      "cost_multiplier": 2.6666666666666665,
+      "forward_tokens": 1065984,
+      "n_windows": 1041,
+      "edge_window_share": 0.0025575447570332483
+    },
+    {
+      "window": 1024,
+      "stride": 256,
+      "bpb": 2.063378153244864,
+      "bpb_steady_state": 2.063331450397324,
+      "min_context": 768,
+      "cost_multiplier": 4.0,
+      "forward_tokens": 1599488,
+      "n_windows": 1562,
+      "edge_window_share": 0.0025559105431309905
+    },
+    {
+      "window": 1024,
+      "stride": 128,
+      "bpb": 2.0647550345156573,
+      "bpb_steady_state": 2.064711873695979,
+      "min_context": 896,
+      "cost_multiplier": 8.0,
+      "forward_tokens": 3198976,
+      "n_windows": 3124,
+      "edge_window_share": 0.0025550942190993293
+    },
+    {
+      "window": 1024,
+      "stride": 64,
+      "bpb": 2.066656307049729,
+      "bpb_steady_state": 2.0666180288616425,
+      "min_context": 960,
+      "cost_multiplier": 16.0,
+      "forward_tokens": 6398976,
+      "n_windows": 6249,
+      "edge_window_share": 0.002554278416347382
+    }
+  ],
+  "profile_head": [
+    3.0159783395479938,
+    2.636718748474388,
+    2.2215739106067174,
+    1.9681761625898142,
+    1.878236828025615,
+    1.8311562585050778,
+    1.7639369916986323,
+    1.6826366174929244,
+    1.7028485279876031,
+    1.6748851897355403,
+    1.6310267189664789,
+    1.6301314909916211,
+    1.6041464879502807,
+    1.6044948554545806,
+    1.5920437809279906,
+    1.584449326783069
+  ],
+  "direct_check": [
+    {
+      "stride": 512,
+      "reconstructed_bpb": 2.06253437328662,
+      "direct_bpb": 2.064841981799463,
+      "abs_diff": 0.0023076085128428403
+    },
+    {
+      "stride": 256,
+      "reconstructed_bpb": 2.063378153244864,
+      "direct_bpb": 2.0654705678419147,
+      "abs_diff": 0.0020924145970506736
+    },
+    {
+      "stride": 128,
+      "reconstructed_bpb": 2.0647550345156573,
+      "direct_bpb": 2.0667462526625298,
+      "abs_diff": 0.00199121814687242
+    },
+    {
+      "stride": 1024,
+      "kind": "pure_naive_partition",
+      "reconstructed_bpb": 2.081603939497414,
+      "direct_bpb": 2.082542539314688,
+      "abs_diff": 0.0009385998172741772
+    }
+  ]
+}

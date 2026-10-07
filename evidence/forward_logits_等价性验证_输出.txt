@@ -1,0 +1,27 @@
+C:\Users\卢怡然\Desktop\C2G\evidence\forward_logits_等价性验证.py:79: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at C:\actions-runner\_work\pytorch\pytorch\torch\csrc\autograd\generated\python_variable_methods.cpp:821.)
+  f"改输入后最大变化 = {float((l1 - l2).abs().max()):.3e}  <- 检验会假阴性")
+forward_logits 等价性与因果性验证
+==========================================================================
+[0] 对照：未训练初始点上的退化现象
+    tie=False 未随机化：logits 全零 = True，改输入后最大变化 = 0.000e+00  <- 检验会假阴性
+    tie=True  未随机化：改 x[0,8] 后只有位置 8 变（11.902），位置 9..16 最大变化 0.000e+00  <- 因 proj 零初始化，无因果耦合
+
+tie_embeddings=True（参数已随机化）
+  [1] 形状 (2, 17, 256) == (2,17,256) -> OK
+  [2] 与官方 forward() 损失差 |Δ|max = 0.000e+00 -> OK  (5.55716181 vs 5.55716181)
+  [3] 因果性 -> OK
+        j=0: 前1位最大Δ=0.00e+00, 本位Δ=45.221
+        j=5: 前5位最大Δ=0.00e+00, 本位Δ=49.683
+        j=8: 前8位最大Δ=0.00e+00, 本位Δ=43.990
+        j=16: 前16位最大Δ=0.00e+00, 本位Δ=49.757
+tie_embeddings=False（参数已随机化）
+  [1] 形状 (2, 17, 256) == (2,17,256) -> OK
+  [2] 与官方 forward() 损失差 |Δ|max = 0.000e+00 -> OK  (5.58169842 vs 5.58169842)
+  [3] 因果性 -> OK
+        j=0: 前1位最大Δ=0.00e+00, 本位Δ=42.934
+        j=5: 前5位最大Δ=0.00e+00, 本位Δ=50.236
+        j=8: 前8位最大Δ=0.00e+00, 本位Δ=45.777
+        j=16: 前16位最大Δ=0.00e+00, 本位Δ=50.247
+==========================================================================
+结论：PASS —— 逐位置、因果、与官方 forward 数值完全一致

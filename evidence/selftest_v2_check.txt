@@ -1,0 +1,20 @@
+# v2 复检记录（2026-10-06）
+
+## 1. 提交脚本语法检查
+py_compile: OK
+
+## 2. 决策函数单元测试
+unit test:  卢怡然_C2G_train_gpt.py
+  PASS  脚本存在且导出全部所需函数
+  PASS  候选 stride 生成：含 window、整除、降序
+  PASS  rho 平坦 -> 无收益 -> 退化为朴素评测
+  PASS  rho 快速饱和 -> 预算内选便宜解，不付 16x
+  PASS  预算 1x -> 强制朴素评测
+  PASS  收益随 stride 单调
+  PASS  朴素参考值 = mean(rho)/ln2
+
+7/7 通过
+
+## 3. submission.json 可解析性
+github_id = shuibubao--zz
+status = not_run

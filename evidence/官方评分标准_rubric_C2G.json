@@ -1,0 +1,103 @@
+{
+  "version": 1,
+  "challenge_id": "C2G",
+  "dimensions": [
+    {
+      "id": "scoreAchievement",
+      "label": "成绩达成",
+      "description": "实际成绩与目标达成的程度（打榜类）",
+      "signals": [
+        "成绩达到目标线",
+        "有分数记录",
+        "边际提升策略"
+      ],
+      "negativeSignals": [
+        "无成绩记录",
+        "无法复现"
+      ],
+      "maxPoints": 25
+    },
+    {
+      "id": "methodology",
+      "label": "方法学",
+      "description": "优化方法的系统性与可解释性",
+      "signals": [
+        "有方法记录",
+        "有对照实验",
+        "策略可解释"
+      ],
+      "negativeSignals": [
+        "瞎试无记录",
+        "无法说明为何有效"
+      ],
+      "maxPoints": 20
+    },
+    {
+      "id": "artifactCompleteness",
+      "label": "产物完整性",
+      "description": "交付物是否齐全、可运行、可独立使用",
+      "signals": [
+        "README齐全",
+        "可运行",
+        "安装/使用说明"
+      ],
+      "negativeSignals": [
+        "文件为空",
+        "缺少核心交付物"
+      ],
+      "maxPoints": 15
+    },
+    {
+      "id": "aiUsage",
+      "label": "AI使用质量",
+      "description": "AI 工具使用是否恰当、有效、可追溯",
+      "signals": [
+        "多轮迭代",
+        "prompt优化",
+        "工作流设计",
+        "AI日志佐证"
+      ],
+      "negativeSignals": [
+        "一句话指令直接提交",
+        "没有AI使用记录"
+      ],
+      "maxPoints": 20
+    },
+    {
+      "id": "reflectionQuality",
+      "label": "复盘质量",
+      "description": "AAR 反思是否深入、有洞察、有改进方案",
+      "signals": [
+        "具体问题分析",
+        "有改进方案",
+        "记录迭代过程",
+        "含失败经验"
+      ],
+      "negativeSignals": [
+        "敷衍了事",
+        "没有实际反思"
+      ],
+      "maxPoints": 20
+    }
+  ],
+  "red_flags": [
+    {
+      "id": "missing_artifacts",
+      "description": "核心交付物缺失",
+      "affectedDimension": "artifactCompleteness",
+      "maxScore": 5
+    },
+    {
+      "id": "no_ai_log",
+      "description": "无 AI 使用记录/AAR",
+      "affectedDimension": "reflectionQuality",
+      "maxScore": 5
+    },
+    {
+      "id": "one_shot_ai",
+      "description": "一句话指令直接提交、无迭代",
+      "affectedDimension": "aiUsage",
+      "maxScore": 5
+    }
+  ]
+}

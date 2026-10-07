@@ -1,0 +1,219 @@
+patched script written; patch count = 11
+同源性审计：提交脚本  vs  CPU dry-run 改编版
+========================================================================
+提交脚本      : C:\Users\卢怡然\Desktop\C2G\卢怡然_C2G_train_gpt.py
+  sha256      = 19f493edbac875accbd51750d0787c7d583a44b1300f8a585177ba0749d37584
+  lines       = 1463
+dry-run 改编版: C:\Users\卢怡然\Desktop\C2G\pg_lab\dryrun\train_gpt_cpu.py
+  sha256      = e5825e951c8741513ce8914d29b143e075dd63302000a1c576dca2e3943908fe
+  lines       = 1484
+
+[1] 统一 diff 覆盖审计（n=0，从磁盘两文件重新推导）
+    差异行           ：-22 / +43
+    已声明补丁       ：11 条，预期删除行合计 = 22
+    删除行数 == 预期 ：是
+    未能被解释的差异行：0 条
+    结论：PASS —— 除声明的设备补丁外无任何改动
+
+[2] 关键函数逐函数 diff（判据：删除行必须能被已声明补丁解释）
+    OK  eval_val_sliding             (103 行, -1/+1) 仅 1 处设备适配差异
+    OK  measure_position_profile     (38 行, -1/+1) 仅 1 处设备适配差异
+    OK  pick_stride_by_knee          (36 行, -0/+0) 逐字节相同
+    OK  _parse_knee_candidates       (21 行, -0/+0) 逐字节相同
+    OK  resolve_eval_stride          (37 行, -0/+0) 逐字节相同
+    OK  stride_candidates            (5 行, -0/+0) 逐字节相同
+    OK  GPT.forward_logits           (26 行, -0/+0) 逐字节相同
+    结论：PASS —— 评测/标定逻辑与提交脚本同源（差异仅设备适配）
+
+[3] 诚实限定
+    - 这不是「在提交脚本原文上直接跑」：本机无 GPU，原文开头就
+      raise RuntimeError('CUDA is required')，物理上跑不起来。
+    - 上述 [1][2] 是能给出的最强替代证明：差异被逐行枚举且全部为设备适配，
+      评测/标定逻辑逐字节同源。
+    - 如需在真机验证，步骤见 README「拿到 8xH100 后怎么跑」。
+
+
+===== DRY-RUN naive =====
+logs/2cc55f78-2109-4ed1-93c9-95fa9d7e78fa.txt
+val_bpb:enabled tokenizer_kind=sentencepiece tokenizer_path=C:/Users/Public/pg_c2g_dryrun/data/sp1024.model
+train_loader:dataset:data train_shards:1
+val_loader:shards pattern=C:/Users/Public/pg_c2g_dryrun/data\fineweb_val_*.bin tokens:47872
+model_params:123464
+world_size:1 grad_accum_steps:8
+sdp_backends:cudnn=False flash=True mem_efficient=False math=False
+attention_mode:gqa num_heads:4 num_kv_heads:2
+tie_embeddings:True embed_lr:0.05 head_lr:0.0 matrix_lr:0.04 scalar_lr:0.04
+train_batch_tokens:8192 train_seq_len:128 iterations:30 warmup_steps:2 max_wallclock_seconds:0.000
+seed:1337
+warmup_step:1/2
+warmup_step:2/2
+step:0/30 val_loss:6.9331 val_bpb:4.0636 train_time:0ms step_avg:0.00ms
+step:1/30 train_loss:6.9322 train_time:4530ms step_avg:4530.43ms
+step:2/30 train_loss:7.0483 train_time:9002ms step_avg:4500.87ms
+step:3/30 train_loss:6.6548 train_time:13552ms step_avg:4517.29ms
+step:4/30 train_loss:6.6058 train_time:18244ms step_avg:4560.91ms
+step:5/30 train_loss:5.7401 train_time:23027ms step_avg:4605.46ms
+step:6/30 train_loss:6.3660 train_time:27637ms step_avg:4606.22ms
+step:7/30 train_loss:6.4854 train_time:32271ms step_avg:4610.19ms
+step:8/30 train_loss:6.0177 train_time:36819ms step_avg:4602.36ms
+step:9/30 train_loss:5.7032 train_time:41745ms step_avg:4638.39ms
+step:10/30 train_loss:5.6455 train_time:46249ms step_avg:4624.91ms
+step:10/30 val_loss:6.1514 val_bpb:3.6054 train_time:46251ms step_avg:4625.10ms
+step:15/30 train_loss:4.9277 train_time:68617ms step_avg:4574.47ms
+step:20/30 train_loss:5.7442 train_time:91136ms step_avg:4556.78ms
+step:20/30 val_loss:5.7523 val_bpb:3.3715 train_time:91137ms step_avg:4556.87ms
+step:25/30 train_loss:5.2586 train_time:113838ms step_avg:4553.50ms
+step:30/30 train_loss:4.8011 train_time:136560ms step_avg:4551.99ms
+step:30/30 val_loss:5.2624 val_bpb:3.0844 train_time:136561ms step_avg:4552.04ms
+peak memory allocated: 0 MiB reserved: 0 MiB
+Serialized model: 371025 bytes
+Code size: 66430 bytes
+Total submission size: 437455 bytes
+Serialized model int8+zlib: 212061 bytes (payload:248096 raw_torch:255201 payload_ratio:1.46x)
+Total submission size int8+zlib: 278491 bytes
+final_int8_zlib_roundtrip val_loss:5.2625 val_bpb:3.0845 eval_time:2294ms
+final_int8_zlib_roundtrip_exact val_loss:5.26250676 val_bpb:3.08445300
+
+[naive] artifact(int8+zlib) = 212,061 bytes = 0.202 MiB （16MB 上限 = 16,777,216）
+
+===== DRY-RUN fixed =====
+logs/ad919305-3480-4e10-aac1-357eeea55e66.txt
+val_bpb:enabled tokenizer_kind=sentencepiece tokenizer_path=C:/Users/Public/pg_c2g_dryrun/data/sp1024.model
+train_loader:dataset:data train_shards:1
+val_loader:shards pattern=C:/Users/Public/pg_c2g_dryrun/data\fineweb_val_*.bin tokens:47872
+model_params:123464
+world_size:1 grad_accum_steps:8
+sdp_backends:cudnn=False flash=True mem_efficient=False math=False
+attention_mode:gqa num_heads:4 num_kv_heads:2
+tie_embeddings:True embed_lr:0.05 head_lr:0.0 matrix_lr:0.04 scalar_lr:0.04
+train_batch_tokens:8192 train_seq_len:128 iterations:30 warmup_steps:2 max_wallclock_seconds:0.000
+seed:1337
+warmup_step:1/2
+warmup_step:2/2
+step:0/30 val_loss:6.9331 val_bpb:4.0636 train_time:0ms step_avg:0.00ms
+step:1/30 train_loss:6.9322 train_time:3471ms step_avg:3471.34ms
+step:2/30 train_loss:7.0483 train_time:6909ms step_avg:3454.47ms
+step:3/30 train_loss:6.6548 train_time:10420ms step_avg:3473.30ms
+step:4/30 train_loss:6.6058 train_time:13863ms step_avg:3465.67ms
+step:5/30 train_loss:5.7401 train_time:17227ms step_avg:3445.44ms
+step:6/30 train_loss:6.3660 train_time:20509ms step_avg:3418.18ms
+step:7/30 train_loss:6.4854 train_time:23744ms step_avg:3391.96ms
+step:8/30 train_loss:6.0177 train_time:27089ms step_avg:3386.11ms
+step:9/30 train_loss:5.7032 train_time:30334ms step_avg:3370.41ms
+step:10/30 train_loss:5.6455 train_time:33667ms step_avg:3366.68ms
+step:10/30 val_loss:6.1514 val_bpb:3.6054 train_time:33668ms step_avg:3366.83ms
+step:15/30 train_loss:4.9277 train_time:50887ms step_avg:3392.48ms
+step:20/30 train_loss:5.7442 train_time:67940ms step_avg:3397.02ms
+step:20/30 val_loss:5.7523 val_bpb:3.3715 train_time:67942ms step_avg:3397.09ms
+step:25/30 train_loss:5.2586 train_time:85293ms step_avg:3411.72ms
+step:30/30 train_loss:4.8011 train_time:102193ms step_avg:3406.44ms
+step:30/30 val_loss:5.2624 val_bpb:3.0844 train_time:102195ms step_avg:3406.50ms
+peak memory allocated: 0 MiB reserved: 0 MiB
+Serialized model: 371025 bytes
+Code size: 66430 bytes
+Total submission size: 437455 bytes
+Serialized model int8+zlib: 212061 bytes (payload:248096 raw_torch:255201 payload_ratio:1.46x)
+Total submission size int8+zlib: 278491 bytes
+  sliding_eval [  1.1%] 16/1496 windows running_bpb=2.863174
+  sliding_eval [ 54.5%] 816/1496 windows running_bpb=3.080727
+sliding_eval_cost forward_tokens=191488 scored_tokens=47968 amortized_cost=3.992x   # 1x = 官方朴素评测
+final_int8_zlib_roundtrip val_loss:5.2618 val_bpb:3.0827 eval_time:9847ms
+final_int8_zlib_roundtrip_exact val_loss:5.26177387 val_bpb:3.08267357
+
+[fixed] artifact(int8+zlib) = 212,061 bytes = 0.202 MiB （16MB 上限 = 16,777,216）
+
+===== DRY-RUN knee =====
+logs/b30b8ef8-bcbf-4920-a821-e3491f98f967.txt
+val_bpb:enabled tokenizer_kind=sentencepiece tokenizer_path=C:/Users/Public/pg_c2g_dryrun/data/sp1024.model
+train_loader:dataset:data train_shards:1
+val_loader:shards pattern=C:/Users/Public/pg_c2g_dryrun/data\fineweb_val_*.bin tokens:47872
+model_params:123464
+world_size:1 grad_accum_steps:8
+sdp_backends:cudnn=False flash=True mem_efficient=False math=False
+attention_mode:gqa num_heads:4 num_kv_heads:2
+tie_embeddings:True embed_lr:0.05 head_lr:0.0 matrix_lr:0.04 scalar_lr:0.04
+train_batch_tokens:8192 train_seq_len:128 iterations:30 warmup_steps:2 max_wallclock_seconds:0.000
+seed:1337
+warmup_step:1/2
+warmup_step:2/2
+step:0/30 val_loss:6.9331 val_bpb:4.0636 train_time:0ms step_avg:0.00ms
+step:1/30 train_loss:6.9322 train_time:3343ms step_avg:3342.61ms
+step:2/30 train_loss:7.0483 train_time:6638ms step_avg:3318.96ms
+step:3/30 train_loss:6.6548 train_time:9997ms step_avg:3332.47ms
+step:4/30 train_loss:6.6058 train_time:13339ms step_avg:3334.79ms
+step:5/30 train_loss:5.7401 train_time:16702ms step_avg:3340.39ms
+step:6/30 train_loss:6.3660 train_time:20076ms step_avg:3345.96ms
+step:7/30 train_loss:6.4854 train_time:23405ms step_avg:3343.60ms
+step:8/30 train_loss:6.0177 train_time:26754ms step_avg:3344.29ms
+step:9/30 train_loss:5.7032 train_time:29982ms step_avg:3331.38ms
+step:10/30 train_loss:5.6455 train_time:33330ms step_avg:3333.04ms
+step:10/30 val_loss:6.1514 val_bpb:3.6054 train_time:33332ms step_avg:3333.21ms
+step:15/30 train_loss:4.9277 train_time:49921ms step_avg:3328.06ms
+step:20/30 train_loss:5.7442 train_time:66968ms step_avg:3348.40ms
+step:20/30 val_loss:5.7523 val_bpb:3.3715 train_time:66970ms step_avg:3348.50ms
+step:25/30 train_loss:5.2586 train_time:83698ms step_avg:3347.94ms
+step:30/30 train_loss:4.8011 train_time:100320ms step_avg:3344.01ms
+step:30/30 val_loss:5.2624 val_bpb:3.0844 train_time:100322ms step_avg:3344.06ms
+peak memory allocated: 0 MiB reserved: 0 MiB
+Serialized model: 371025 bytes
+Code size: 66430 bytes
+Total submission size: 437455 bytes
+Serialized model int8+zlib: 212061 bytes (payload:248096 raw_torch:255201 payload_ratio:1.46x)
+Total submission size int8+zlib: 278491 bytes
+knee_calib mode=knee budget=2.0 gain_frac=0.95 chosen_stride=64 cost=2.00x predicted_gain_bpb=0.004986 max_gain_bpb=0.004986
+knee_calib rho_shape=[(0, 5.25716), (16, 5.21571), (32, 5.21798), (48, 5.2181), (64, 5.21812), (80, 5.21976), (96, 5.22067), (112, 5.22276)]
+  sliding_eval [  2.1%] 16/748 windows running_bpb=3.145619
+sliding_eval_cost forward_tokens=95744 scored_tokens=47936 amortized_cost=1.997x   # 1x = 官方朴素评测
+final_int8_zlib_roundtrip val_loss:5.2584 val_bpb:3.0811 eval_time:18567ms
+final_int8_zlib_roundtrip_exact val_loss:5.25836236 val_bpb:3.08112383
+
+[knee] artifact(int8+zlib) = 212,061 bytes = 0.202 MiB （16MB 上限 = 16,777,216）
+
+===== DRY-RUN knee_tight =====
+logs/bcf7f57d-0467-48ec-9995-5117844358b8.txt
+val_bpb:enabled tokenizer_kind=sentencepiece tokenizer_path=C:/Users/Public/pg_c2g_dryrun/data/sp1024.model
+train_loader:dataset:data train_shards:1
+val_loader:shards pattern=C:/Users/Public/pg_c2g_dryrun/data\fineweb_val_*.bin tokens:47872
+model_params:123464
+world_size:1 grad_accum_steps:8
+sdp_backends:cudnn=False flash=True mem_efficient=False math=False
+attention_mode:gqa num_heads:4 num_kv_heads:2
+tie_embeddings:True embed_lr:0.05 head_lr:0.0 matrix_lr:0.04 scalar_lr:0.04
+train_batch_tokens:8192 train_seq_len:128 iterations:30 warmup_steps:2 max_wallclock_seconds:0.000
+seed:1337
+warmup_step:1/2
+warmup_step:2/2
+step:0/30 val_loss:6.9331 val_bpb:4.0636 train_time:0ms step_avg:0.00ms
+step:1/30 train_loss:6.9322 train_time:3358ms step_avg:3358.18ms
+step:2/30 train_loss:7.0483 train_time:6760ms step_avg:3380.12ms
+step:3/30 train_loss:6.6548 train_time:10043ms step_avg:3347.58ms
+step:4/30 train_loss:6.6058 train_time:13420ms step_avg:3354.91ms
+step:5/30 train_loss:5.7401 train_time:16746ms step_avg:3349.28ms
+step:6/30 train_loss:6.3660 train_time:20125ms step_avg:3354.08ms
+step:7/30 train_loss:6.4854 train_time:23443ms step_avg:3349.02ms
+step:8/30 train_loss:6.0177 train_time:28318ms step_avg:3539.78ms
+step:9/30 train_loss:5.7032 train_time:31881ms step_avg:3542.31ms
+step:10/30 train_loss:5.6455 train_time:35174ms step_avg:3517.36ms
+step:10/30 val_loss:6.1514 val_bpb:3.6054 train_time:35175ms step_avg:3517.54ms
+step:15/30 train_loss:4.9277 train_time:51657ms step_avg:3443.83ms
+step:20/30 train_loss:5.7442 train_time:68134ms step_avg:3406.69ms
+step:20/30 val_loss:5.7523 val_bpb:3.3715 train_time:68135ms step_avg:3406.77ms
+step:25/30 train_loss:5.2586 train_time:86117ms step_avg:3444.68ms
+step:30/30 train_loss:4.8011 train_time:102642ms step_avg:3421.41ms
+step:30/30 val_loss:5.2624 val_bpb:3.0844 train_time:102644ms step_avg:3421.47ms
+peak memory allocated: 0 MiB reserved: 0 MiB
+Serialized model: 371025 bytes
+Code size: 66430 bytes
+Total submission size: 437455 bytes
+Serialized model int8+zlib: 212061 bytes (payload:248096 raw_torch:255201 payload_ratio:1.46x)
+Total submission size int8+zlib: 278491 bytes
+WARN knee_calib budget=0.5x 连 1x（朴素评测）都付不起，已退化为朴素评测 stride=128；评测必须完成，预算在此被视为软上限。请调大 EVAL_COST_BUDGET 或调小 KNEE_CANDIDATES 的代价倍数。
+knee_calib mode=knee budget=0.5 gain_frac=0.95 chosen_stride=128 cost=1.00x predicted_gain_bpb=0.000000 max_gain_bpb=0.004986
+knee_calib rho_shape=[(0, 5.25716), (16, 5.21571), (32, 5.21798), (48, 5.2181), (64, 5.21812), (80, 5.21976), (96, 5.22067), (112, 5.22276)]
+final_int8_zlib_roundtrip val_loss:5.2625 val_bpb:3.0845 eval_time:14041ms
+final_int8_zlib_roundtrip_exact val_loss:5.26250676 val_bpb:3.08445300
+
+[knee_tight] artifact(int8+zlib) = 212,061 bytes = 0.202 MiB （16MB 上限 = 16,777,216）
+
+ALL DRY-RUNS PASSED
+exit=0

@@ -1,0 +1,27 @@
+[seed 1337] params=493,840 seq=1024 batch_seqs=8 steps=1200
+[seed 1337] step 1/1200 loss 5.3962 bpb 7.7851 lr 0.00013 elapsed 1.9s
+[seed 1337] step 51/1200 loss 2.4124 bpb 3.4804 lr 0.00500 elapsed 52.1s
+[seed 1337] step 101/1200 loss 2.2058 bpb 3.1823 lr 0.00497 elapsed 101.3s
+[seed 1337] step 151/1200 loss 2.0053 bpb 2.8930 lr 0.00490 elapsed 150.7s
+[seed 1337] step 201/1200 loss 1.6977 bpb 2.4492 lr 0.00478 elapsed 199.5s
+[seed 1337] step 251/1200 loss 1.6499 bpb 2.3803 lr 0.00463 elapsed 248.9s
+[seed 1337] step 301/1200 loss 1.3124 bpb 1.8934 lr 0.00444 elapsed 298.4s
+[seed 1337] step 351/1200 loss 1.5883 bpb 2.2914 lr 0.00421 elapsed 347.7s
+[seed 1337] step 401/1200 loss 1.3947 bpb 2.0121 lr 0.00396 elapsed 398.0s
+[seed 1337] step 451/1200 loss 1.0533 bpb 1.5195 lr 0.00368 elapsed 449.3s
+[seed 1337] step 501/1200 loss 1.1342 bpb 1.6363 lr 0.00338 elapsed 498.9s
+[seed 1337] step 551/1200 loss 1.0184 bpb 1.4692 lr 0.00307 elapsed 547.9s
+[seed 1337] step 601/1200 loss 1.1462 bpb 1.6536 lr 0.00275 elapsed 599.5s
+[seed 1337] step 651/1200 loss 1.0510 bpb 1.5162 lr 0.00243 elapsed 650.8s
+[seed 1337] step 701/1200 loss 0.7226 bpb 1.0425 lr 0.00211 elapsed 703.2s
+[seed 1337] step 751/1200 loss 1.1062 bpb 1.5960 lr 0.00181 elapsed 763.6s
+[seed 1337] step 801/1200 loss 0.9757 bpb 1.4076 lr 0.00151 elapsed 821.4s
+[seed 1337] step 851/1200 loss 0.9775 bpb 1.4103 lr 0.00124 elapsed 883.5s
+[seed 1337] step 901/1200 loss 0.8735 bpb 1.2602 lr 0.00099 elapsed 945.6s
+[seed 1337] step 951/1200 loss 1.1095 bpb 1.6006 lr 0.00077 elapsed 992.7s
+[seed 1337] step 1001/1200 loss 0.9307 bpb 1.3427 lr 0.00059 elapsed 1040.5s
+[seed 1337] step 1051/1200 loss 1.2716 bpb 1.8345 lr 0.00044 elapsed 1094.2s
+[seed 1337] step 1101/1200 loss 0.9931 bpb 1.4327 lr 0.00034 elapsed 1140.7s
+[seed 1337] step 1151/1200 loss 0.7787 bpb 1.1234 lr 0.00027 elapsed 1184.8s
+[seed 1337] step 1200/1200 loss 0.9948 bpb 1.4352 lr 0.00025 elapsed 1226.7s
+[seed 1337] 完成 -> runs_w1024\ckpt_seed1337.pt

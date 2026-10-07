@@ -1,0 +1,18 @@
+# 行尾不变式：关闭 Git 的一切自动转换（所有文件按二进制处理，字节原样进出）。
+#
+# 为什么需要这个文件：
+#   Windows 版 Git for Windows 出厂默认 core.autocrlf=true，会把克隆下来的文本文件
+#   转成 CRLF。本交付包里有两处依赖"逐字节不变"：
+#     - evidence/submission_script.patch 必须能在包内路径上 apply 出与
+#       卢怡然_C2G_train_gpt.py **sha256 完全相同**的产物；
+#     - evidence/base_sha256.txt 登记的哈希必须与包内文件一致。
+#   只要评审克隆时 autocrlf=true，这两条都会对不上，看起来就像证据造假。
+#   实测（本机，默认配置）：不关 autocrlf 时 apply 产物 66604 字节、sha256 不符；
+#   关掉后 65141 字节、sha256 = 19f493ed… 与提交脚本完全一致。
+#
+#   这个坑我在 C4A 里踩过一次（导致 39 条假漂移），这里是同一道防线的复用。
+#
+#   注意：这里刻意**不**写 `*.py text eol=lf` 之类的规则——那会引入"提交时归一、
+#   检出时还原"的转换，与"字节原样"冲突。要让文件是 LF，就在生成时写 LF
+#   （build_submission.py 已用 newline="\n"），而不是靠 Git 事后转换。
+* -text

@@ -1,0 +1,159 @@
+{
+  "author": "卢怡然",
+  "github_id": "shuibubao--zz",
+  "track": "10min_16mb",
+  "name": "Runtime Knee-Calibrated Sliding-Window Evaluation",
+  "status": "not_run",
+  "date": "2026-10-04",
+
+  "status_note": "（v4 新增，回应评审“bpb 全为 null 但未说明语义”）status 是三态之一：not_run | submitted | verified。此处为 not_run，含义是：**交付者从未在 8xH100 上执行过本脚本**（本机无 GPU、无外网）。它与“跑过但成绩不好”“跑过但没达标”是不同状态——后两者应当填 submitted 并给出真实数字。not_run 不是“省略”，而是“尚未产生该字段所需的观测”。",
+
+  "null_field_semantics": {
+    "_说明": "v4 新增。每一个 null 都应当是“尚未观测”而不是“漏填”。这里逐字段交代它会在哪一步、由哪个命令产生；不得用估算值、引用值或他人成绩回填。",
+    "val_bpb": "最终评测的 bits-per-byte。产生时机：提交脚本在 8xH100 上跑完，日志行 final_int8_zlib_roundtrip_exact val_bpb:<值>。回填来源：该日志，不是任何推算。",
+    "val_loss": "同上日志行的 val_loss。",
+    "val_bpb_std": "3 个 seed 各自 val_bpb 的样本标准差。需要跑满 seeds=[1337,42,2026] 三遍。",
+    "seed_results": "3 个 seed 各自的完整结果（val_bpb / 标定出的 stride / 实测 amortized_cost）。",
+    "eval_stride": "拐点标定实际选出的 stride。产生时机：日志行 knee_calib chosen_stride=<值>。mode=fixed 时为传入值；mode=naive 时为 train_seq_len。",
+    "hardware": "实际机型（如 8xH100）。产生来源：脚本自带的 nvidia-smi 日志段。",
+    "train_time_seconds": "日志的 total_training_time / train_time。",
+    "eval_time_seconds": "日志的 eval_time（最终滑窗评测那一段）。",
+    "train_steps / step_avg_ms": "日志的 step_avg_ms 与总步数。",
+    "artifact_bytes": "int8+zlib 打包产物字节数。产生时机：脚本末尾打印，且 dry-run 已验证 < 16 MiB（实测 0.202 MiB，见 local_evidence.dryrun）。",
+    "bytes_total": "artifact_bytes + code_bytes，用于与 16 MiB 上限比较。",
+    "model_params / num_layers / model_dim / vocab_size / train_seq_len": "日志的 model_params 段与 Hyperparameters 实际取值（受环境变量控制）。",
+    "_为什么不为 null 的字段很少": "只有 code_bytes 与 local_evidence 下的数字不为 null——它们是本机可观测的，且已明确标注坐标系与官方不同。"
+  },
+
+  "how_to_fill_after_getting_gpu": {
+    "_说明": "v4 新增。拿到 8xH100 后的执行顺序，每一步对应上面的哪些字段。",
+    "step_0": "git -c core.autocrlf=false apply -p1 evidence/submission_script.patch 验证包内证据链（应先于任何运行）。",
+    "step_1": "EVAL_STRIDE_MODE=naive 跑一遍 -> 得到官方基线的 val_bpb / val_loss / train_time_seconds / artifact_bytes。这是所有 ΔBPB 的零点。",
+    "step_2": "EVAL_STRIDE_MODE=fixed 依次跑 EVAL_STRIDE=train_seq_len/{1,2,4,8,16} -> 得到代价—收益曲线，回填 eval_stride 与 eval_cost_budget 的实测口径（核对预测 window/stride 与实测 amortized_cost，CPU dry-run 上实测 3.992x vs 预测 4.0x）。",
+    "step_3": "EVAL_STRIDE_MODE=knee 跑一遍 -> 回填 eval_stride（= chosen_stride）与 val_bpb。",
+    "step_4": "换 seed 重复 step_1/3 共 3 次（1337/42/2026）-> 回填 val_bpb_std 与 seed_results。",
+    "step_5": "把日志原样留档到 evidence/，再跑 python pg_lab/hash_registry.py 重新登记哈希，最后把 status 改为 submitted。"
+  },
+
+  "_honest_note": "本文件所有 8xH100 相关字段均为 null。交付者本机无 GPU、无外网，从未在 8xH100 上执行过训练或评测。这里不填任何推测值。字段结构对齐官方 records/track_10min_16mb/*/submission.json，便于拿到算力后直接回填。",
+
+  "val_bpb": null,
+  "val_loss": null,
+  "val_bpb_std": null,
+  "seeds": [1337, 42, 2026],
+  "n_seeds": 3,
+  "seed_results": null,
+
+  "eval_stride": null,
+  "eval_stride_mode": "knee",
+  "eval_cost_budget": 2.0,
+  "knee_gain_frac": 0.95,
+  "eval_cost_budget_note": "EVAL_COST_BUDGET=2.0 是本方案的目标档位，不是一个已被验证的最优值。真机上应先跑 EVAL_STRIDE_MODE=fixed 的协议族扫描（H2），再用扫描出的代价—收益曲线回头定这个值。",
+
+  "hardware": null,
+  "train_time_seconds": null,
+  "eval_time_seconds": null,
+  "train_steps": null,
+  "step_avg_ms": null,
+  "artifact_bytes": null,
+  "code_bytes": 65141,
+  "bytes_total": null,
+
+  "model_params": null,
+  "num_layers": null,
+  "model_dim": null,
+  "vocab_size": null,
+  "train_seq_len": null,
+
+  "technique_summary": [
+    "官方 baseline 架构与训练脚本：未改动（sha256 见 evidence/base_sha256.txt）",
+    "滑窗评测机制：来自官方 record 2026-03-19_SlidingWindowEval（Matthew Li）",
+    "本方案改动：把 eval stride 从硬编码常数改为由 rho(p) 现场标定",
+    "新增 GPT.forward_logits（与 forward 数学等价，仅多返回逐位置 logits）",
+    "新增 measure_position_profile / pick_stride_by_knee / eval_val_sliding / resolve_eval_stride"
+  ],
+
+  "attribution": {
+    "base": "openai/parameter-golf  train_gpt.py (sha256 c6cae5e7...)",
+    "sliding_window_mechanism": "openai/parameter-golf records/track_10min_16mb/2026-03-19_SlidingWindowEval (Matthew Li)",
+    "our_contribution": "stride 的运行时拐点标定 + 用训练分布而非验证集做标定 + 评测算力预算显式化"
+  },
+
+  "local_evidence": {
+    "note": "以下数字来自 CPU 小尺度实验台 pg_lab/，坐标系与官方不同，不可与官方 BPB 直接比较。",
+    "model_params": 493840,
+    "vocab": "256 裸字节",
+    "corpus": "本机 .md/.txt/.py 4.0MB train / 400KB val",
+    "seeds": [1337, 42, 2026],
+    "naive_bpb_mean": 2.00351,
+    "best_bpb_mean": 1.97734,
+    "best_cost_multiplier": 2.67,
+    "bpb_at_2x_cost": 1.97737,
+    "bpb_at_16x_cost": 1.97891,
+    "paired_diff_2x_vs_16x": 0.00154,
+    "paired_std_2x_vs_16x": 0.00050,
+    "rho_reconstruction_max_error_bpb": 0.00209,
+    "train_vs_val_calibration_agree": true,
+
+    "w1024_real_config": {
+      "note": "训练窗口 1024 + 评测窗口 1024 的真实配置对照（v3 补测，填补 AAR §三 缺口）。token 预算与 W=512 组完全相同（1024x8 = 512x16 = 8192 tokens/step x 1200 步），唯一变量是训练窗口。",
+      "seeds": [1337, 42, 2026],
+      "naive_bpb_mean": 2.07601,
+      "best_cost_multiplier": 2.0,
+      "delta_bpb_at_2x": -0.018548,
+      "delta_bpb_at_2x_std": 0.000459,
+      "delta_bpb_at_16x": -0.013653,
+      "paired_diff_2x_vs_16x": -0.004894,
+      "paired_std_2x_vs_16x": 0.000674,
+      "rho_reconstruction_max_error_bpb": 0.00246,
+      "evidence": "evidence/w1024_config_check.txt"
+    },
+
+    "dryrun": {
+      "note": "提交脚本的 CPU 端到端 dry-run：2 层/64 维/vocab 1024，30 步，11 条公开 CPU 适配补丁。证明代码路径真跑通，不证明官方尺度数值。v4 起覆盖三种模式 + 一个边界档（评审洞 3）。",
+      "modes_run": ["naive", "fixed", "knee", "knee_tight"],
+      "artifact_int8_zlib_bytes": 212061,
+      "artifact_mib": 0.202,
+      "limit_bytes": 16777216,
+
+      "naive": {"stride": 128, "roundtrip_val_bpb": 3.08445300},
+      "fixed": {
+        "eval_stride": 32,
+        "predicted_cost_x": 4.0,
+        "measured_amortized_cost_x": 3.992,
+        "roundtrip_val_bpb": 3.08267357,
+        "_口径核对": "EVAL_COST_BUDGET 的口径 = forward_tokens / scored_tokens。预测值 window/stride = 4.0x，实测 3.992x（略低因尾窗 padding 摊薄）。这是预算口径第一次在真实运行里被核对，而不只是纸面约定。"
+      },
+      "knee": {
+        "chosen_stride": 64,
+        "predicted_cost_x": 2.0,
+        "measured_amortized_cost_x": 1.997,
+        "roundtrip_val_bpb": 3.08112383
+      },
+      "knee_tight": {
+        "_what": "EVAL_COST_BUDGET=0.5（连 1x 都付不起）的边界档，用来端到端验证 v4 修复的退化路径",
+        "warn_logged": true,
+        "degraded_to_stride": 128,
+        "roundtrip_val_bpb": 3.08445300,
+        "_关键结论": "与 naive 模式的 val_bpb 完全相同（3.08445300），逐位一致 —— 证明「退化为朴素」走的确实是官方朴素评测那条路径，而不是随便挑一个候选。"
+      },
+
+      "_三个模式横向对比": "naive 3.08445 -> knee(2x) 3.08112 -> fixed(4x) 3.08267。多付 2 倍算力只再换来 0.0015 BPB，这正是「拐点」要抓的东西（此数值来自 CPU 缩小模型，不可外推到官方尺度）。",
+
+      "same_origin_audit": {
+        "note": "回应评审「跑的是改编版」。本机无 GPU，提交脚本原文开头 raise RuntimeError('CUDA is required')，物理上跑不起来；能给出的最强证明是下面两条（从磁盘两文件重新推导，非循环论证）。",
+        "diff_audit": "-22/+43 行差异，删除行数 == 11 条已声明补丁的预期次数之和（22），未能被补丁清单解释的差异行 0 条",
+        "key_functions": "pick_stride_by_knee、_parse_knee_candidates、resolve_eval_stride、stride_candidates、GPT.forward_logits 与提交脚本逐字节相同；eval_val_sliding 与 measure_position_profile 各仅 1 处设备适配差异（autocast 设备类型）",
+        "evidence": ["evidence/dryrun_同源性证明.txt", "evidence/dryrun_all_v4_log.txt"]
+      },
+
+      "bug_found_and_fixed_v3": "forward_logits 引用不存在的 self.vocab_size（单测覆盖不到），已改为 self.tok_emb.weight.shape[0]",
+      "bug_found_and_fixed_v4": [
+        "预算连 1x 都付不起时返回 rows[-1]（stride 最小 = 最贵候选，实测选出 cost=8.0 而预算是 0.25x）——与注释「退化为朴素」相反且突破硬约束；改为退化为朴素 + budget_ok=False + WARN",
+        "KNEE_CANDIDATES 含 0/负数时放行并除零崩溃（实测 '0,-1,9999' 触发 ZeroDivisionError）；改为过滤非正数与超窗值，全非法时回退自动枚举",
+        "eval_val_sliding 的 docstring 声称审计 forward token 数，实际累计的是计分 token 数（恒等于 1x，等于没审计）；改为真实累计并打印 sliding_eval_cost"
+      ],
+      "evidence": ["evidence/dryrun_naive.txt", "evidence/dryrun_fixed.txt", "evidence/dryrun_knee.txt", "evidence/dryrun_knee_tight.txt"]
+    }
+  }
+}

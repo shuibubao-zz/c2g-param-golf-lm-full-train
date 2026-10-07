@@ -1,0 +1,42 @@
+logs/bcf7f57d-0467-48ec-9995-5117844358b8.txt
+val_bpb:enabled tokenizer_kind=sentencepiece tokenizer_path=C:/Users/Public/pg_c2g_dryrun/data/sp1024.model
+train_loader:dataset:data train_shards:1
+val_loader:shards pattern=C:/Users/Public/pg_c2g_dryrun/data\fineweb_val_*.bin tokens:47872
+model_params:123464
+world_size:1 grad_accum_steps:8
+sdp_backends:cudnn=False flash=True mem_efficient=False math=False
+attention_mode:gqa num_heads:4 num_kv_heads:2
+tie_embeddings:True embed_lr:0.05 head_lr:0.0 matrix_lr:0.04 scalar_lr:0.04
+train_batch_tokens:8192 train_seq_len:128 iterations:30 warmup_steps:2 max_wallclock_seconds:0.000
+seed:1337
+warmup_step:1/2
+warmup_step:2/2
+step:0/30 val_loss:6.9331 val_bpb:4.0636 train_time:0ms step_avg:0.00ms
+step:1/30 train_loss:6.9322 train_time:3358ms step_avg:3358.18ms
+step:2/30 train_loss:7.0483 train_time:6760ms step_avg:3380.12ms
+step:3/30 train_loss:6.6548 train_time:10043ms step_avg:3347.58ms
+step:4/30 train_loss:6.6058 train_time:13420ms step_avg:3354.91ms
+step:5/30 train_loss:5.7401 train_time:16746ms step_avg:3349.28ms
+step:6/30 train_loss:6.3660 train_time:20125ms step_avg:3354.08ms
+step:7/30 train_loss:6.4854 train_time:23443ms step_avg:3349.02ms
+step:8/30 train_loss:6.0177 train_time:28318ms step_avg:3539.78ms
+step:9/30 train_loss:5.7032 train_time:31881ms step_avg:3542.31ms
+step:10/30 train_loss:5.6455 train_time:35174ms step_avg:3517.36ms
+step:10/30 val_loss:6.1514 val_bpb:3.6054 train_time:35175ms step_avg:3517.54ms
+step:15/30 train_loss:4.9277 train_time:51657ms step_avg:3443.83ms
+step:20/30 train_loss:5.7442 train_time:68134ms step_avg:3406.69ms
+step:20/30 val_loss:5.7523 val_bpb:3.3715 train_time:68135ms step_avg:3406.77ms
+step:25/30 train_loss:5.2586 train_time:86117ms step_avg:3444.68ms
+step:30/30 train_loss:4.8011 train_time:102642ms step_avg:3421.41ms
+step:30/30 val_loss:5.2624 val_bpb:3.0844 train_time:102644ms step_avg:3421.47ms
+peak memory allocated: 0 MiB reserved: 0 MiB
+Serialized model: 371025 bytes
+Code size: 66430 bytes
+Total submission size: 437455 bytes
+Serialized model int8+zlib: 212061 bytes (payload:248096 raw_torch:255201 payload_ratio:1.46x)
+Total submission size int8+zlib: 278491 bytes
+WARN knee_calib budget=0.5x 连 1x（朴素评测）都付不起，已退化为朴素评测 stride=128；评测必须完成，预算在此被视为软上限。请调大 EVAL_COST_BUDGET 或调小 KNEE_CANDIDATES 的代价倍数。
+knee_calib mode=knee budget=0.5 gain_frac=0.95 chosen_stride=128 cost=1.00x predicted_gain_bpb=0.000000 max_gain_bpb=0.004986
+knee_calib rho_shape=[(0, 5.25716), (16, 5.21571), (32, 5.21798), (48, 5.2181), (64, 5.21812), (80, 5.21976), (96, 5.22067), (112, 5.22276)]
+final_int8_zlib_roundtrip val_loss:5.2625 val_bpb:3.0845 eval_time:14041ms
+final_int8_zlib_roundtrip_exact val_loss:5.26250676 val_bpb:3.08445300

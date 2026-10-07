@@ -1,0 +1,15 @@
+unit test:  卢怡然_C2G_train_gpt.py
+  PASS  脚本存在且导出全部所需函数
+  PASS  候选 stride 生成：含 window、整除、降序
+  PASS  rho 平坦 -> 无收益 -> 退化为朴素评测
+  PASS  rho 快速饱和 -> 预算内选便宜解，不付 16x
+  PASS  预算 1x -> 强制朴素评测
+  PASS  预算 <1x -> 退化为朴素且 budget_ok=False（v4 修复）
+  PASS  不变式扫描：代价永不突破预算（72 组合）
+  PASS  KNEE_CANDIDATES 非正数/超窗被过滤（v4 修复）
+  PASS  KNEE_CANDIDATES 全非法 -> 回退自动枚举（v4 修复）
+  PASS  KNEE_CANDIDATES 非整数 -> fail fast
+  PASS  收益随 stride 单调
+  PASS  朴素参考值 = mean(rho)/ln2
+
+12/12 通过
